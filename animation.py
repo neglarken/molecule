@@ -6,7 +6,7 @@ from atom import Atom
 # функция для вращения координат относительно оси z
 def rotate_z(x: float, y: float, z: float, angle_deg: float):
     angle_rad = np.radians(angle_deg) # преобразует угол в градусах в радианы
-    cos_a, sin_a = np.cos(angle_rad), np.sin(angle_rad)
+    cos_a, sin_a = np.cos(angle_rad), np.sin(angle_rad) # вычисление углов
     x_new = cos_a * x - sin_a * y # матрица поворота
     y_new = sin_a * x + cos_a * y # матрица поворота
     return x_new, y_new, z
