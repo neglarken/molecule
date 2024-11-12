@@ -1,23 +1,67 @@
-import animation
-import atom
-import constants
+import ovito.io
+from ovito.modifiers import CreateBondsModifier, ClusterAnalysisModifier, CalculateDisplacementsModifier, AffineTransformationModifier
+from ovito.vis import Viewport
+import math
+import numpy as np
 
-# открываем xyz файл для чтения и автоматически закрываем после
-with open(constants.input_filename, "r") as input_file:
-    atom_number = int(input_file.readline())
-    molecule_name = input_file.readline()
+if __name__ == '__main__':
+    num_frames = 100  # Количество кадров в анимации
+    rotation_angle_per_frame_z = 360 / num_frames  # Угол вращения по оси Z на кадр (в градусах)
+    rotation_angle_per_frame_y = 180 / num_frames
 
-    print(f"Атомов в молекуле: {atom_number}\nИмя молекулы: {molecule_name}")
+    pipeline = ovito.io.import_file("20.xyz")
 
-    atoms = atom.read_from_lines(input_file.readlines())
+    bond_modifier = CreateBondsModifier()
+    bond_modifier.mode = CreateBondsModifier.Mode.Pairwise
+    bond_modifier.set_pairwise_cutoff("C", "C", 1.6)
+    bond_modifier.set_pairwise_cutoff("C", "H", 1.1)
+    bond_modifier.set_pairwise_cutoff("C", "O", 1.5)
+    bond_modifier.set_pairwise_cutoff("O", "H", 1.0)
 
-# ищем количество связей в молекуле
-bonds_number = atom.find_bonds_count(atoms)
-print(f"В молекуле {bonds_number} связей.")
+    cluster_analysis_modifier = ClusterAnalysisModifier(compute_com=True)
 
-# ищем центр масс плоской молекулы (z = 0)
-x_center, y_center = atom.find_mass_center(atoms)
-print(f"Центр масс: x = {x_center} y = {y_center}")
+    calculate_displacements_modifier = CalculateDisplacementsModifier()
+    calculate_displacements_modifier.vis.enabled = False
 
-# создаем и записываем анимацию вращения в файл
-animation.make_animation(atoms)
+    def rotate(frame, data):
+        theta = np.deg2rad(frame * 5.0)
+
+        tm = [
+            [np.cos(theta), 0, np.sin(theta), 0],
+            [0, 1, 0, 0],
+            [-np.sin(theta), 0, np.cos(theta), 0]
+        ]
+
+        data.apply(AffineTransformationModifier(transformation=tm))
+
+    pipeline.modifiers.append(bond_modifier)
+    pipeline.modifiers.append(cluster_analysis_modifier)
+    pipeline.modifiers.append(calculate_displacements_modifier)
+    pipeline.modifiers.append(rotate)
+    pipeline.add_to_scene()
+
+    data = pipeline.compute()
+
+    particles_property = data.particles
+
+    type_property = particles_property.particle_types
+
+    cluster_table = data.tables['clusters']
+
+    for i in range(particles_property.count):
+        particle_type = type_property.type_by_id(type_property[i]).name
+        particle_position = particles_property.positions[i]
+
+        print(f"Атом {particle_type} на координатах: {particle_position}")
+
+    print(f"Количество атомов: {particles_property.count}")
+    print(f"Количество связей в молекуле: {data.particles.bonds.count}")
+    print(f"Центр масс: {cluster_table['Center of Mass'][...]}")
+
+    vp = Viewport()
+    vp.type = Viewport.Type.Ortho
+    vp.camera_pos = (0, -30, 30)
+    vp.camera_dir = (0, 1, -1)
+    vp.fov = math.radians(1000)
+
+    vp.render_anim(size=(800, 600), filename="animation.mp4", range=(0,num_frames), fps=8)

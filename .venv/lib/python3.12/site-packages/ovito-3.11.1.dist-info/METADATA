@@ -1,0 +1,59 @@
+Metadata-Version: 2.1
+Name: ovito
+Version: 3.11.1
+Summary: A scientific data visualization and analysis software for particle-based simulations
+Home-page: https://www.ovito.org
+Author: OVITO GmbH, Germany
+Author-email: mail@ovito.org
+Project-URL: Bug Tracker, https://gitlab.com/stuko/ovito
+Project-URL: Documentation, https://docs.ovito.org/python/
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: C++
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: Microsoft :: Windows
+Classifier: Operating System :: MacOS :: MacOS X
+Classifier: Operating System :: POSIX :: Linux
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Topic :: Scientific/Engineering :: Chemistry
+Classifier: Topic :: Scientific/Engineering :: Physics
+Classifier: Topic :: Scientific/Engineering :: Visualization
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+Requires-Dist: numpy >=1.23
+Requires-Dist: traits >=6.3
+Requires-Dist: PySide6-Essentials >=6.5.2
+
+OVITO (Open Visualization Tool) is a scientific visualization and analysis package for atomistic and
+particle-based simulation data. Visit the official website for more information:
+
+<https://www.ovito.org/>
+
+This PyPI package provides the ``ovito`` module, which allows you to employ OVITO's
+data I/O, analysis and rendering capabilities in standalone Python scripts
+and integrate them into automated workflows.
+
+The OVITO desktop application is available as a separate download
+from [www.ovito.org](https://www.ovito.org/). It provides a graphical user interface
+for interactive analysis and visualization of simulation data.
+
+### Documentation
+
+Documentation for the most recent version of the ``ovito`` module:
+
+<https://docs.ovito.org/python/>
+
+### Installation
+
+To download and install the ``ovito`` module in your Python interpreter, run
+```
+python -m pip install -U ovito
+```
+
+The ``ovito`` module is available for the following target platforms:
+
+| Operating system | CPU architecture      | Python versions       |
+|------------------|-----------------------|-----------------------|
+| Windows          | x86_64 (Intel)        | 3.9 - 3.13            |
+| Linux            | x86_64 (Intel)        | 3.9 - 3.13            |
+| macOS 12.0+      | arm64 (Apple silicon) | 3.9 - 3.13            |
+| macOS 11.0+      | x86_64 (Intel)        | 3.9 - 3.13            |

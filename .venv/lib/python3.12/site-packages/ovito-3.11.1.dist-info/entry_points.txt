@@ -1,0 +1,9 @@
+[OVITO.FileReader]
+ASE Database = ovito._extensions.scripts.readers:ASEDatabaseReader
+ASE Trajectory = ovito._extensions.scripts.readers:ASETrajectoryReader
+
+[OVITO.Modifier]
+Calculate local entropy = ovito.modifiers:CalculateLocalEntropyFunction
+Identify fcc planar faults = ovito.modifiers:IdentifyFCCPlanarFaultsModifier
+Render LAMMPS regions = ovito.modifiers:RenderLAMMPSRegionsModifier
+Shrink-wrap simulation box = ovito.modifiers:ShrinkWrapSimulationBoxFunction
