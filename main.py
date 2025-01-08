@@ -1,6 +1,4 @@
 # Пакет ovito.io используется для работы с файлами, включая импорт данных из симуляций молекулярной динамики.
-import math
-
 import ovito.io
 
 # Импортируем необходимые модификаторы из пакета ovito.modifiers:
@@ -9,7 +7,7 @@ import ovito.io
 # - CalculateDisplacementsModifier: для расчёта смещений частиц.
 # - AffineTransformationModifier: для применения аффинных преобразований (например, вращения).
 from ovito.modifiers import CreateBondsModifier, ClusterAnalysisModifier, CalculateDisplacementsModifier, \
-    AffineTransformationModifier
+    AffineTransformationModifier, PythonScriptModifier
 
 # Viewport используется для настройки визуализации сцены, например, камеры и её параметров.
 from ovito.vis import Viewport
@@ -17,7 +15,9 @@ from ovito.vis import Viewport
 # Импортируем дополнительные библиотеки для математических вычислений и работы с массивами.
 import numpy as np
 
-import energy
+import math
+
+from energy import total_energy
 
 if __name__ == '__main__':
     # Количество кадров в анимации.
@@ -108,6 +108,8 @@ if __name__ == '__main__':
     # Выводим центр масс молекулы (из таблицы кластерного анализа).
     print(f"Центр масс: {cluster_table['Center of Mass'][...]}")
 
+    print("Энергия молекулы", total_energy(data))
+
     # Создаём объект камеры для визуализации сцены.
     vp = Viewport()
 
@@ -122,8 +124,6 @@ if __name__ == '__main__':
 
     # Задаём поле зрения камеры (отдаляем её).
     vp.fov = math.radians(1000)
-
-    print("Энергия молекулы", energy.calculate_bond_energy_by_length(data) + energy.calculate_vdw_energy(data))
 
     # Рендерим анимацию молекулы с вращением.
     vp.render_anim(size=(800, 600), filename="animation.mp4", range=(0, num_frames), fps=8)
